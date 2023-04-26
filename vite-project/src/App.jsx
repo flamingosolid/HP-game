@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
-
+import GameOver from "./components/Game-over";
 import "./App.css";
 
 function App() {
   const [id, setId] = useState(0);
   const [maxChar, setMaxChar] = useState(0);
   const [correctAnswer, setCorrectAnswer] = useState(false);
+  const [guessCount, setGuessCount] = useState(0);
+  const [gameover, setGameOver] = useState(false);
 
   const [character, setCharacter] = useState({});
   const [guess, setGuess] = useState("");
@@ -24,10 +26,20 @@ function App() {
         setMaxChar(data.length - 1);
         setCharacter({
           name: data[id].name,
-          gender: data[id].gender,
-          house: data[id].house,
           species: data[id].species,
-          wand: data[id].wand.core,
+          gender: data[id].gender,
+          wand: [
+            data[id].wand.wood,
+            ", ",
+            data[id].wand.core,
+            ", ",
+            data[id].wand.length,
+            " inches",
+          ],
+          house: data[id].house,
+          patronus: data[id].patronus,
+          alternate_names: data[id].alternate_names,
+          actor: data[id].actor,
         });
       });
   }, [id]);
@@ -38,7 +50,12 @@ function App() {
   }
 
   function handleGuess() {
+    if (guessCount === 8) {
+      setGameOver(true);
+      console.log("You Loose");
+    }
     if (!guess) {
+      setGuessCount(guessCount + 1);
       console.log("no input");
     } else {
       if (guess.toLowerCase() === character.name.toLowerCase()) {
@@ -49,6 +66,7 @@ function App() {
           setCorrectAnswer(false);
         }, 3000);
       } else {
+        setGuessCount(guessCount + 1);
         console.log("wrong name");
       }
     }
@@ -63,21 +81,30 @@ function App() {
         <input onChange={playerGuess} type="text" />
         <button onClick={handleGuess}>Revelio</button>
       </div>
+      <div>{gameover ? 8 : guessCount} of 8 Guesses</div>
       <div className="character-container">
         <h1 className={correctAnswer ? "correct" : null}>
           {correctAnswer ? character.name : "?"}
         </h1>
-        <h4>{character.gender}</h4>
-        <h4>{character.house}</h4>
-        <h4>{character.species}</h4>
-        <h4>{character.wand}</h4>
+        <h4>Gender: {character.gender}</h4>
+        <h4>House: {character.house}</h4>
+        <h4>Species: {character.species}</h4>
+        <h4>Wand: {character.wand}</h4>
+        <h4>Patronus: {!character.patronus ? "?" : character.patronus}</h4>
+        <h4>
+          Alternate Names:{" "}
+          {character.alternate_names
+            ? character.alternate_names.map((name) => name + ", ")
+            : character.alternate_names}
+        </h4>
+        <h4>Actor: {character.actor}</h4>
       </div>
       {!id ? (
         <button>Previus</button>
       ) : (
         <button onClick={decrement}>Previus</button>
       )}
-      {id === 401 ? (
+      {id === maxChar ? (
         <button>Next</button>
       ) : (
         <button onClick={increment}>Next</button>
