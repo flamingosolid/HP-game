@@ -54,3 +54,9 @@ button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
+
+.character-container {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+}

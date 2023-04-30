@@ -4,7 +4,7 @@ import "../styles/GameOver.css";
 function GameOver() {
   return (
     <>
-      <div>
+      <div className="game-over">
         <h1>Game Over</h1>
       </div>
     </>

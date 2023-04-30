@@ -40,6 +40,7 @@ function App() {
           patronus: data[id].patronus,
           alternate_names: data[id].alternate_names,
           actor: data[id].actor,
+          img: data[id].image,
         });
       });
   }, [id]);
@@ -50,20 +51,19 @@ function App() {
   }
 
   function handleGuess() {
-    if (guessCount === 8) {
+    if (guessCount === 8 && !correctAnswer) {
       setGameOver(true);
-      console.log("You Loose");
     }
     if (!guess) {
       setGuessCount(guessCount + 1);
       console.log("no input");
     } else {
-      if (guess.toLowerCase() === character.name.toLowerCase()) {
-        console.log("correct name");
+      if (guess.toLowerCase().trim() === character.name.toLowerCase()) {
         setCorrectAnswer(true);
         setTimeout(() => {
           setId(Math.floor(Math.random() * 401));
           setCorrectAnswer(false);
+          setGuessCount(0);
         }, 3000);
       } else {
         setGuessCount(guessCount + 1);
@@ -82,22 +82,46 @@ function App() {
         <button onClick={handleGuess}>Revelio</button>
       </div>
       <div>{gameover ? 8 : guessCount} of 8 Guesses</div>
+      <h1 className={correctAnswer ? "correct" : null}>
+        {correctAnswer ? character.name : "?"}
+      </h1>
+      <img src={character.img} />
+      {gameover ? <GameOver /> : null}
+
       <div className="character-container">
-        <h1 className={correctAnswer ? "correct" : null}>
-          {correctAnswer ? character.name : "?"}
-        </h1>
-        <h4>Gender: {character.gender}</h4>
-        <h4>House: {character.house}</h4>
-        <h4>Species: {character.species}</h4>
-        <h4>Wand: {character.wand}</h4>
-        <h4>Patronus: {!character.patronus ? "?" : character.patronus}</h4>
-        <h4>
-          Alternate Names:{" "}
-          {character.alternate_names
-            ? character.alternate_names.map((name) => name + ", ")
-            : character.alternate_names}
-        </h4>
-        <h4>Actor: {character.actor}</h4>
+        <div>
+          <h4>Gender</h4>
+          <p>{character.gender}</p>
+        </div>
+        <div>
+          <h4>House</h4>
+          <p>{character.house}</p>
+        </div>
+
+        <div>
+          <h4>Species</h4>
+          <p>{character.species}</p>
+        </div>
+        <div>
+          <h4>Wand</h4>
+          <p>{character.wand}</p>
+        </div>
+        <div>
+          <h4>Patronus</h4>
+          <p>{!character.patronus ? "?" : character.patronus}</p>
+        </div>
+        <div>
+          <h4>Alternate Names</h4>
+          <p>
+            {character.alternate_names
+              ? character.alternate_names.map((name) => name + ", ")
+              : character.alternate_names}
+          </p>
+        </div>
+        <div>
+          <h4>Actor</h4>
+          <p>{character.actor}</p>
+        </div>
       </div>
       {!id ? (
         <button>Previus</button>
