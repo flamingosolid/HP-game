@@ -22,8 +22,16 @@ function App() {
     fetch("https://hp-api.onrender.com/api/characters")
       .then((res) => res.json())
       .then((data) => {
-        console.log(data[id]);
+        console.log(data);
         setMaxChar(data.length - 1);
+        const charactersWithPatronus = data.filter(
+          (character) => character.patronus
+        );
+        const charactersWith = data.filter((el) => el.ancestry);
+
+        console.log(charactersWithPatronus);
+        console.log(charactersWith);
+
         setCharacter({
           name: data[id].name,
           species: data[id].species,
@@ -41,6 +49,8 @@ function App() {
           alternate_names: data[id].alternate_names,
           actor: data[id].actor,
           img: data[id].image,
+          eyeColour: data[id].eyeColour,
+          ancestry: data[id].ancestry,
         });
       });
   }, [id]);
@@ -83,45 +93,60 @@ function App() {
       </div>
       <div>{gameover ? 8 : guessCount} of 8 Guesses</div>
       <h1 className={correctAnswer ? "correct" : null}>
-        {correctAnswer ? character.name : "?"}
+        {correctAnswer || gameover ? character.name : "?"}
       </h1>
-      <img src={character.img} />
+      {correctAnswer || gameover ? <img src={character.img} /> : null}
       {gameover ? <GameOver /> : null}
 
       <div className="character-container">
-        <div>
-          <h4>Gender</h4>
-          <p>{character.gender}</p>
-        </div>
-        <div>
-          <h4>House</h4>
-          <p>{character.house}</p>
-        </div>
-
-        <div>
-          <h4>Species</h4>
-          <p>{character.species}</p>
-        </div>
-        <div>
-          <h4>Wand</h4>
-          <p>{character.wand}</p>
-        </div>
-        <div>
-          <h4>Patronus</h4>
-          <p>{!character.patronus ? "?" : character.patronus}</p>
-        </div>
-        <div>
-          <h4>Alternate Names</h4>
-          <p>
-            {character.alternate_names
-              ? character.alternate_names.map((name) => name + ", ")
-              : character.alternate_names}
-          </p>
-        </div>
-        <div>
-          <h4>Actor</h4>
-          <p>{character.actor}</p>
-        </div>
+        {guessCount >= 0 ? (
+          <div>
+            <h4>Gender</h4>
+            <p>{character.gender}</p>
+          </div>
+        ) : (
+          <div></div>
+        )}
+        {guessCount >= 1 ? (
+          <div>
+            <h4>House</h4>
+            <p>{character.house}</p>
+          </div>
+        ) : null}
+        {guessCount >= 2 ? (
+          <div>
+            <h4>Species</h4>
+            <p>{character.species}</p>
+          </div>
+        ) : null}
+        {guessCount >= 3 ? (
+          <div>
+            <h4>Wand</h4>
+            <p>{character.wand}</p>
+          </div>
+        ) : null}
+        {guessCount >= 4 ? (
+          <div>
+            <h4>Patronus</h4>
+            <p>{!character.patronus ? "?" : character.patronus}</p>
+          </div>
+        ) : null}
+        {guessCount >= 5 ? (
+          <div>
+            <h4>Alternate Names</h4>
+            <p>
+              {character.alternate_names
+                ? character.alternate_names.map((name) => name + ", ")
+                : character.alternate_names}
+            </p>
+          </div>
+        ) : null}
+        {guessCount >= 6 ? (
+          <div>
+            <h4>Actor</h4>
+            <p>{character.actor}</p>
+          </div>
+        ) : null}
       </div>
       {!id ? (
         <button>Previus</button>
