@@ -8,9 +8,9 @@ function App() {
   const [correctAnswer, setCorrectAnswer] = useState(false);
   const [guessCount, setGuessCount] = useState(0);
   const [gameover, setGameOver] = useState(false);
-
   const [character, setCharacter] = useState({});
   const [guess, setGuess] = useState("");
+  const [blurred, setBlurred] = useState("");
   function increment() {
     setId(id + 1);
   }
@@ -22,35 +22,30 @@ function App() {
     fetch("https://hp-api.onrender.com/api/characters")
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         setMaxChar(data.length - 1);
-        const charactersWithPatronus = data.filter(
-          (character) => character.patronus
-        );
-        const charactersWith = data.filter((el) => el.ancestry);
-
-        console.log(charactersWithPatronus);
-        console.log(charactersWith);
+        const easy = data.filter((character) => character.image);
+        const charactersWith = data.filter((character) => character.image);
 
         setCharacter({
-          name: data[id].name,
-          species: data[id].species,
-          gender: data[id].gender,
+          name: easy[id].name,
+          species: easy[id].species,
+          gender: easy[id].gender,
           wand: [
-            data[id].wand.wood,
+            easy[id].wand.wood,
             ", ",
-            data[id].wand.core,
+            easy[id].wand.core,
             ", ",
-            data[id].wand.length,
+            easy[id].wand.length,
             " inches",
           ],
-          house: data[id].house,
-          patronus: data[id].patronus,
-          alternate_names: data[id].alternate_names,
-          actor: data[id].actor,
-          img: data[id].image,
-          eyeColour: data[id].eyeColour,
-          ancestry: data[id].ancestry,
+          house: easy[id].house,
+          patronus: easy[id].patronus,
+          alternate_names: easy[id].alternate_names,
+          actor: easy[id].actor,
+          img: easy[id].image,
+          eyeColour: easy[id].eyeColour,
+          ancestry: easy[id].ancestry,
+          id: easy[id].id,
         });
       });
   }, [id]);
@@ -61,41 +56,66 @@ function App() {
   }
 
   function handleGuess() {
-    if (guessCount === 8 && !correctAnswer) {
+    if (guessCount === 6 && !correctAnswer) {
       setGameOver(true);
+      setTimeout(() => {
+        setId(Math.floor(Math.random() * 24));
+        setCorrectAnswer(false);
+        setGuessCount(0);
+        setGameOver(false);
+      }, 3000);
     }
     if (!guess) {
       setGuessCount(guessCount + 1);
-      console.log("no input");
     } else {
       if (guess.toLowerCase().trim() === character.name.toLowerCase()) {
         setCorrectAnswer(true);
         setTimeout(() => {
-          setId(Math.floor(Math.random() * 401));
+          setId(Math.floor(Math.random() * 24));
           setCorrectAnswer(false);
           setGuessCount(0);
         }, 3000);
       } else {
         setGuessCount(guessCount + 1);
-        console.log("wrong name");
       }
     }
   }
+  useEffect(() => {
+    if (guessCount === 6) {
+      setBlurred("blurred_img_level_1");
+    } else if (guessCount === 5) {
+      setBlurred("blurred_img_level_2");
+    } else if (guessCount === 4) {
+      setBlurred("blurred_img_level_3");
+    } else if (guessCount === 3) {
+      setBlurred("blurred_img_level_4");
+    } else if (guessCount === 2) {
+      setBlurred("blurred_img_level_5");
+    } else if (guessCount === 1) {
+      setBlurred("blurred_img_level_6");
+    } else {
+      setBlurred("blurred_img_level_7");
+    }
+  }, [guessCount]);
 
   return (
     <>
       <div>
-        <h1>Who am i?</h1>
+        <h1>Guess Harry Potter Character</h1>
       </div>
       <div>
         <input onChange={playerGuess} type="text" />
         <button onClick={handleGuess}>Revelio</button>
       </div>
-      <div>{gameover ? 8 : guessCount} of 8 Guesses</div>
+      <div>{gameover ? 6 : guessCount} of 6 Guesses</div>
       <h1 className={correctAnswer ? "correct" : null}>
-        {correctAnswer || gameover ? character.name : "?"}
+        {correctAnswer || gameover ? character.name : null}
       </h1>
-      {correctAnswer || gameover ? <img src={character.img} /> : null}
+      {correctAnswer || gameover ? (
+        <img src={character.img} />
+      ) : (
+        <img className={blurred} src={character.img} />
+      )}
       {gameover ? <GameOver /> : null}
 
       <div className="character-container">
@@ -148,16 +168,19 @@ function App() {
           </div>
         ) : null}
       </div>
+      {/* //forward and back buttons */}
+      {/* 
       {!id ? (
         <button>Previus</button>
       ) : (
         <button onClick={decrement}>Previus</button>
       )}
+
       {id === maxChar ? (
         <button>Next</button>
       ) : (
         <button onClick={increment}>Next</button>
-      )}
+      )} */}
     </>
   );
 }

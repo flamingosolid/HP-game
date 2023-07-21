@@ -21,3 +21,37 @@
 .correct {
   color: green;
 }
+
+.blurred_img_level_7 {
+  height: 250px;
+  filter: blur(50px);
+}
+.blurred_img_level_6 {
+  height: 250px;
+  filter: blur(45px);
+}
+.blurred_img_level_5 {
+  height: 250px;
+  filter: blur(40px);
+}
+.blurred_img_level_4 {
+  height: 250px;
+  filter: blur(30px);
+}
+.blurred_img_level_3 {
+  height: 250px;
+  filter: blur(20px);
+}
+.blurred_img_level_2 {
+  height: 250px;
+  filter: blur(15px);
+}
+.blurred_img_level_1 {
+  height: 250px;
+  filter: blur(10px);
+}
+
+.null-img {
+  height: 257px;
+  width: 0px;
+}
